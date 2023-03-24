@@ -1,7 +1,7 @@
 from datetime import datetime
 from fastapi import FastAPI
 
-from utils.jobs import get_jobs
+from utils.jobs import get_jobs, PlatformName
 
 app = FastAPI()
 
@@ -11,7 +11,8 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/get-jobs/{start_date}")
-async def get_jobs(start_date: datetime):
-    if start_date == 'today':
-        return await get_jobs(start_date=datetime.today().replace(hour=0, minute=0))
+@app.get("/get-jobs/")
+async def get_jobs(platform: PlatformName = None, start_date: datetime = None):
+    if not start_date:
+        start_date = datetime.today().replace(hour=0, minute=0)
+    return await get_jobs(start_date=start_date, platform_name=platform)
